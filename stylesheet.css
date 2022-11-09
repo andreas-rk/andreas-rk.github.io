@@ -1,0 +1,119 @@
+* {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+h1 {
+    color:orangered;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+h3 {
+    text-align: center;
+}
+
+#intro {
+    line-height: 0.5rem;
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+#intro p {
+    font-size: 14px;
+}
+
+#drop-zone {
+    border: 0.5rem orange solid;
+    height: 10rem;
+    text-align: center;
+    font-size: 50px;
+    padding-top: 5rem;
+}
+
+#scrub-button {
+    text-align: center;
+    margin: auto;
+    display: flex;
+    margin-bottom: 2rem;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+#image-display-div{
+    margin:auto;
+    display: flex;
+    justify-content: center;
+    width: 500px;
+    height: 400px;
+    background-position: center;
+    background-size: cover;
+  }
+
+#image-filename {
+    text-align: center;
+
+}
+
+#save-image-button-div {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    font-size: large;
+    font-weight: bold;
+    text-align: center;
+}
+
+#save-image-button {
+    color: orange;
+}
+
+#main-table {
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.exif-key-class {
+    color: black;
+}
+
+th {
+    position: sticky; 
+    top: 0;
+    text-align: left;
+}
+
+table {
+    width: 100%;
+    float:left;
+}
+
+#preview-column {
+    text-align: center;
+    width: 50%
+}
+
+#exif-column {
+    width: 50%;
+}
+
+td {
+    max-width: 300px;
+    overflow: auto;
+    text-overflow: scroll;
+    white-space: nowrap;
+    vertical-align: top;
+    padding-right:0px;
+}
+
+td.exif-key-class {
+    width: 30%;
+}
+
+td.exif-value-class {
+    width: 70%;
+}
+
+#custom-dto-div {
+    margin-top: 2rem;
+    line-height: 1.5rem;
+}

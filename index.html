@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="stylesheet.css">
+    </head>
+    <body>
+        <h1>👆 Metadaddy 👇</h1>
+
+        <div id="intro">
+            <p>Hey ho hello! <strong>Metadaddy</strong> er et værktøj til den varmeste kundeservicemedarbejder i spillet.</p>
+            <p><strong>Metadaddy</strong> fjerner automatisk al EXIF-data fra dit billede, og samtidigt</p>
+            <p>nedskalerer den dit billede, så det på bedste vis kan indlæses med lysets hastighed (<em>hvis du har fiber XDDDD - get it???</em>)</p>
+            <p>...Ej, men det er sgu lavet til, at du kan køre billeder igennem her, inden du finder på</p>
+            <p>at smide det ind i et standarsvar eller i en Help Center-artikel</p>
+            <p>...og ja - med "du" mener jeg <em>dig</em>, Magnus 🤠</p>
+            <p>...og også mig (Andreas), jaja 😠</p>
+            <br><br><br>
+            <p>👇 Klik du sgu bare på "Vælg fil" nu</p>
+        </div>
+        
+        <center><input type="file" id="image-input" accept="image/png, image/jpg, image/jpeg"></center>
+        <br>
+
+        <h3 id="found-or-not" style="visibility:hidden;">hi :)</h3>
+
+        <table id="main-table">
+            <tr>
+                <td id="preview-column">
+                    <div>
+                        <img id="preview"></img>
+                    </div>
+                    <div id="custom-dto-div" style="margin-top:2rem;visibility:hidden;">
+                        <span><strong>JPEG/JPG ONLY</strong></span>
+                        <br><span>Set Custom DateTimeOriginal</span>
+                        <br><span><em>YYYY:MM:DD HH:MM:SS</em></span>
+                        <br><input type="text" id="dto-input" placeholder="2010:10:10 10:10:10" pattern="[0-9]{4}:[0-9]{2}:[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}">
+                        <button id="set-dto-btn"> Set DateTimeOriginal</button>
+                    </div>
+                    <div id="save-image-button-div">
+                        
+                        <a id="save-image-button" style="visibility:hidden;"> 💾 Save Image </a>
+                    </div>
+                </td>
+                <td id="exif-column">
+                    <div id="exif-info">
+                        <table id="exif-table">
+                            <thead id="exif-table-head">
+                            <tr>
+                                <th id="exif-table-text"></th>
+                                <th id="value-table-text"></th>
+                            </tr>
+                            </thead>
+                            <tbody id="exif-table-body"></tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <script type="text/javascript" src="piexifjs.js"></script>
+        <script type="text/javascript" src="script.js" async defer></script>
+        <script type="text/javascript" src="exif.js"></script>
+        
+    </body>
+</html>
