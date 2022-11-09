@@ -9,6 +9,12 @@ const foundOrNot = document.querySelector("#found-or-not");
 const dtoInput = document.querySelector("#dto-input");
 const setDtoButton = document.querySelector("#set-dto-btn");
 const dtoDiv = document.querySelector("#custom-dto-div");
+const confirmDtoSpan = document.querySelector("#confirm-dto-set");
+
+const sizeDiv = document.querySelector("#display-file-sizes");
+const sizeBeforeSpan = document.querySelector("#size-before");
+const sizeAfterSpan = document.querySelector("#size-after");
+const sizeReductionSpan = document.querySelector("#size-reduction");
 
 let imgFile;
 let hasPhotoBeenSeen = false;
@@ -16,28 +22,30 @@ let isDateTimeOriginalSet = false;
 
 setDtoButton.addEventListener("click", function(e) {
     checkDTOInput();
+    //confirmDtoSpan.textContent = "DateTimeOriginal was set!"
+    confirmDtoSpan.setAttribute("style", "visibility:visible;");
 })
 
 
 imageInput.addEventListener('change', function (e) {
     // det er helt sindssygt pinligt, hvis du ikke forstår følgende
     imgFile = e.target.files[0];
+    imgSize = imgFile.size / 1000;
     let filename = imgFile.name;
     let reader = new FileReader();
     reader.onload = function (e) {
         let img = document.createElement("img");
         img.onload = function() {
             if (hasPhotoBeenSeen) {
-                clearTable()
-            }
-            
-            if (imgFile.type === "image/jpeg") {
-                dtoDiv.setAttribute("style", "visibility:visible");
+                clearTable();
+                clearDTOInput();
             }
 
+            manageDTODivVisibility(imgFile.type);
             hasPhotoBeenSeen = true;
             drawCanvas(img);
             getExif(imgFile);
+
             saveImageBtn.setAttribute("style", "visibility:visible");
             document.querySelector("#exif-table-text").textContent = "EXIF";
             document.querySelector("#value-table-text").textContent = "VALUE";
@@ -46,8 +54,7 @@ imageInput.addEventListener('change', function (e) {
     }
     reader.readAsDataURL(imgFile);
 
-    // easy reading
-
+    // easy læsning her
     function drawCanvas(img) {
         let MAX_WIDTH = 750;
         let MAX_HEIGHT = 750;
@@ -55,7 +62,7 @@ imageInput.addEventListener('change', function (e) {
         let width = img.width;
         let height = img.height;
 
-        // næste 11 linjer er tyvstjålet fra www... Har ikke forsøgt at forstå det, but it works wonders <3
+        // næste 11 linjer er tyvstjålet. Har ikke forsøgt at forstå det, but it works wonders <3
         if (width > height) {
             if (width > MAX_WIDTH) {
                 height = height * (MAX_WIDTH / width);
@@ -76,11 +83,11 @@ imageInput.addEventListener('change', function (e) {
         
         let ctx = canvas.getContext("2d");
         
-        // prøv at lege med lækkerheden vha. disse hohoho
-        ctx.mozImageSmoothingEnabled = true;
+        // prøv evt. at lege med lækkerheden vha. disse hohoho
+        ctx.mozImageSmoothingEnabled = false;
         ctx.webkitImageSmoothingEnabled = false;
         ctx.msImageSmoothingEnabled = false;
-        ctx.imageSmoothingEnabled = false;
+        ctx.imageSmoothingEnabled = true;
 
         ctx.drawImage(img, 0, 0, width, height);
 
@@ -91,11 +98,20 @@ imageInput.addEventListener('change', function (e) {
         let canvasPhotoUrl = canvas.toDataURL(imgFile.type);
         document.getElementById("preview").src = canvasPhotoUrl;
         saveScrubbedImage(canvasPhotoUrl, filename);
+        let newFileSize = dataURLtoBlob(canvasPhotoUrl, imgFile.type).size / 1000;
+        let sizeReduction = calculateSizeReduction(imgSize, newFileSize);
+
+        sizeBeforeSpan.textContent = imgSize + " KB";
+        sizeAfterSpan.textContent = newFileSize + " KB";
+        sizeReductionSpan.textContent = Math.round(sizeReduction) + "%";
+        sizeDiv.setAttribute("style", "visiblity:visible;");
+
+
     }
 
 
     function getExif(file) {
-        // Henter hella EXIF-data med en _anelse_ assistance fra ./exif.js (https://github.com/exif-js/exif-js)
+        // henter hella EXIF-data med en _anelse_ assistance fra ./exif.js (https://github.com/exif-js/exif-js)
         EXIF.getData(file, function() {
             let allMetaData = EXIF.getAllTags(this);
             populateExifTable(allMetaData)
@@ -183,47 +199,79 @@ imageInput.addEventListener('change', function (e) {
     function saveScrubbedImage(url, filename) {
         saveImageBtn.href = url;
         saveImageBtn.download = "scrubbed_" + filename;
-        //saveImageBtn.href = canvas.toDataURL(); // sæt download link til url genereret fra canvas
-        //saveImageBtn.download = "scrubbed_" + filename; // sæt prefix "scrubbed_" til filnavnet
     }
 
     function clearTable() {
-        //*ADVRSEL* ualmindeligt avanceret kode i denne funktion
+        //*ADVRSEL* ualmindeligt avanceret kode i denne funktion, hvis man ikke har læst ovenstående kommentarer
         document.getElementById("exif-table-body").innerHTML = "";
     }
-
-
 });
 
 
+function clearDTOInput() {
+    // Resetter inputfeltet til custom DTO value, og skjuler teksten der siger, at en værdi blev sat.
+    dtoInput.value = "";
+    confirmDtoSpan.setAttribute("style", "visibility:hidden;");
+}
+
 function checkDTOInput(e) {
+    // Checker om der er en værdi i DTO-input-feltet. Hvis der er, ruller vi videre med ny funktion og ellers returner vi bare.
     let dto = dtoInput.value;
     
     if (!dto) {
-        console.log("no input found!");
         return
     }
     prepAndSetNewPhoto(dto);
 }
+function manageDTODivVisibility(imageType) {
+    // Hvis vi har fat i en jpg/jpeg-fil, viser vi dto-elementerne. 
+    /// Hvis ikke, skjuler vi dem.
+    if (imageType === "image/jpeg") {
+        dtoDiv.setAttribute("style", "visibility:visible");
+    } else {
+        dtoDiv.setAttribute("style", "visibility:hidden");
+    }
+}
 
-function prepAndSetNewPhoto(dto) {
+function prepAndSetNewPhoto(dto) {    
+    // Laver et obj til EXIF, tilføjer ønskede værdi til dto-tagget via piexif.js -
+    // gemmer dto-tagget og dens værdi i billedets exif, og ændrer url på save-knappen til at matche det nye billede - 
+    // såfremt der rent faktisk står noget i input-feltet til at sætte custom DTO value
+
     oldSaveImageBtnLink = saveImageBtn.href;
-    console.log("input found: " + dto);
     let exif = {}
     exif[piexif.ExifIFD.DateTimeOriginal] = dto;
     let exifObj = {"Exif": exif};
-    console.log("exif was set to" + exifObj.Exif);
     let exifStr = piexif.dump(exifObj);
     let reader = new FileReader();
     reader.onload = function(e) {
-        console.log("reader has loaded")
         let inserted = piexif.insert(exifStr, e.target.result);
-        var image = new Image();
+        let image = new Image();
         image.src = inserted;
         saveImageBtn.href = inserted;
         saveImageBtn.download = "DTO_Scrubbed_" + imgFile.name;
     };
     reader.readAsDataURL(imgFile);
-    console.log("prepAndSetNewPhoto done!")
 }
 
+
+// Den her er sgu semi-stjålet og skal blot bruges til at udregne den kommende filstørrelse på det nye billede
+function dataURLtoBlob(dataURL, fileType) {
+    
+    // Decode the dataURL
+    let binary = atob(dataURL.split(',')[1]);
+    
+    // Create 8-bit unsigned array
+    let array = [];
+    for(var i = 0; i < binary.length; i++) {
+        array.push(binary.charCodeAt(i));
+    }
+    
+    // Return Blob object
+    return new Blob([new Uint8Array(array)], {type: fileType});
+}
+
+function calculateSizeReduction(sizePre, sizePost) {
+    // tror den ehdder (startvaerdi - slutvaerdi) / startværdi * 100
+    return (sizePre - sizePost) / sizePre * 100;
+}

@@ -27,12 +27,23 @@
                     <div>
                         <img id="preview"></img>
                     </div>
+                    <div id="display-file-sizes" style="visibility:hidden;">
+                        <span style="font-weight:bold;">Size Before: </span>
+                        <span id="size-before"></span>
+                        <br>
+                        <span style="font-weight:bold;">Size After: </span>
+                        <span id="size-after"></span>
+                        <br>
+                        <span style="font-weight:bold;">= reduction of: </span>
+                        <span id="size-reduction"></span>
+                    </div>
                     <div id="custom-dto-div" style="margin-top:2rem;visibility:hidden;">
                         <span><strong>JPEG/JPG ONLY</strong></span>
                         <br><span>Set Custom DateTimeOriginal</span>
                         <br><span><em>YYYY:MM:DD HH:MM:SS</em></span>
                         <br><input type="text" id="dto-input" placeholder="2010:10:10 10:10:10" pattern="[0-9]{4}:[0-9]{2}:[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}">
                         <button id="set-dto-btn"> Set DateTimeOriginal</button>
+                        <br><span id="confirm-dto-set" style="visibility: hidden;">DateTimeOriginal was set!</span>
                     </div>
                     <div id="save-image-button-div">
                         

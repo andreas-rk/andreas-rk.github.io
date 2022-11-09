@@ -117,3 +117,7 @@ td.exif-value-class {
     margin-top: 2rem;
     line-height: 1.5rem;
 }
+
+#display-file-sizes {
+    margin-top: 1rem;
+}
