@@ -1,4 +1,4 @@
-# Metaaddy
+# Metadaddy
 Not meant to be used by the public. This was made for a very, very specific situation.
 
 A web-based tool to run photos through before sharing them with the world (e.g. in help center articles, macros etc.).
