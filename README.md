@@ -1,15 +1,9 @@
 # Metadaddy
-Not meant to be used by the public. This was made for a very, very specific situation.
-Further, the tool is very buggy, and I am too lazy to fix it.
+Very homemade tool, which makes it easier to prepare photos to be used for end-user support (e.g. help centers).
 
-A web-based tool to run photos through before sharing them with the world (e.g. in help center articles, macros etc.).
+Select a photo, and save a copy without the metadata, downscaled and reduced in size.
 
-Select a photo, and save a copy without all the exif data, downscaled and reduced in size.
-
-If you've selected a jpeg/jpg, you can even set a custom DateTimeOriginal EXIF tag.
-
-#### Thanks to exif.js and piexif.js
-
+If you've selected a jpeg/jpg, you can set a custom DateTimeOriginal EXIF tag (which can be nice for testing purposes).
 
 ## How To Use
 **1)** Select a photo (jpg/png)
